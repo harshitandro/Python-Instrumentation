@@ -1,5 +1,6 @@
 import os
 import sys
+from importlib import invalidate_caches
 from importlib._bootstrap_external import spec_from_file_location
 from importlib.abc import MetaPathFinder, Loader
 
@@ -62,3 +63,17 @@ class MyLoader(Loader):
                                 instrument(func, start_callback, end_callback, error_callback))
         except:
             print("Fata re : {}".format(sys.exc_info()))
+
+
+def enable_module_hook_on_load():
+    """This will enable the instrumentation of user modules upon load."""
+    sys.meta_path.insert(0, MyMetaFinder())
+    sys.path_importer_cache.clear()
+    invalidate_caches()
+
+
+def disable_module_hook_on_load():
+    """Counter function of enable_module_hook_on_load"""
+    sys.meta_path = sys.meta_path[1:]
+    sys.path_importer_cache.clear()
+    invalidate_caches()
