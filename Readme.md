@@ -107,3 +107,7 @@ returned value: 0
 
 ### Known issues: 
 - Currently the callbacks are unable to determine the name of the hooked API that has been intercepted. Currently it will result in `UNKNOWN` value.
+
+### References:
+- https://stackoverflow.com/questions/5626193/what-is-monkey-patching
+- https://filippo.io/instance-monkey-patching-in-python/
