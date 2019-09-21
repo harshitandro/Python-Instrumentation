@@ -5,15 +5,16 @@ from importlib._bootstrap_external import spec_from_file_location
 from importlib.abc import MetaPathFinder, Loader
 
 from constants.hooks import USER_CALLABLES_TO_HOOK
-from utils.instrumentation import instrument, start_callback, end_callback, error_callback
+from utils.callbacks import start_callback, end_callback, error_callback
+from utils.instrumentation import instrument
 
 
-class MyMetaFinder(MetaPathFinder):
+class CustomMetaFinder(MetaPathFinder):
     def find_spec(self, fullname, path, target=None):
         if path is None or path == "":
             path = [os.getcwd()]  # top level import --
         if "." in fullname:
-            *parents, name = fullname.split(".")
+            parents, name = fullname.split(".")
         else:
             name = fullname
         for entry in path:
@@ -27,13 +28,13 @@ class MyMetaFinder(MetaPathFinder):
             if not os.path.exists(filename):
                 continue
 
-            return spec_from_file_location(fullname, filename, loader=MyLoader(filename),
+            return spec_from_file_location(fullname, filename, loader=CustomLoader(filename),
                                            submodule_search_locations=submodule_locations)
 
         return None  # we don't know how to import this
 
 
-class MyLoader(Loader):
+class CustomLoader(Loader):
     def __init__(self, filename):
         self.filename = filename
 
@@ -67,7 +68,7 @@ class MyLoader(Loader):
 
 def enable_module_hook_on_load():
     """This will enable the instrumentation of user modules upon load."""
-    sys.meta_path.insert(0, MyMetaFinder())
+    sys.meta_path.insert(0, CustomMetaFinder())
     sys.path_importer_cache.clear()
     invalidate_caches()
 
