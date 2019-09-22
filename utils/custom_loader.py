@@ -1,6 +1,5 @@
 import os
 import sys
-from importlib import invalidate_caches
 from importlib._bootstrap_external import spec_from_file_location
 from importlib.abc import MetaPathFinder, Loader
 
@@ -14,7 +13,7 @@ class CustomMetaFinder(MetaPathFinder):
         if path is None or path == "":
             path = [os.getcwd()]  # top level import --
         if "." in fullname:
-            parents, name = fullname.split(".")
+            *parents, name = fullname.split(".")
         else:
             name = fullname
         for entry in path:
@@ -57,24 +56,22 @@ class CustomLoader(Loader):
                         cls = getattr(module, class_str)
                     if cls is not None:
                         func = getattr(cls, func_str)
-                        setattr(cls, func_str, instrument(func, start_callback, end_callback, error_callback))
+                        setattr(cls, func_str, instrument(func, start_callback, end_callback, error_callback, isMethod=True))
                     else:
                         func = getattr(module, func_str)
                         setattr(module, func_str,
                                 instrument(func, start_callback, end_callback, error_callback))
         except:
-            print("Fata re : {}".format(sys.exc_info()))
+            print("Error caught : {}".format(sys.exc_info()))
 
 
 def enable_module_hook_on_load():
     """This will enable the instrumentation of user modules upon load."""
     sys.meta_path.insert(0, CustomMetaFinder())
     sys.path_importer_cache.clear()
-    invalidate_caches()
 
 
 def disable_module_hook_on_load():
     """Counter function of enable_module_hook_on_load"""
     sys.meta_path = sys.meta_path[1:]
     sys.path_importer_cache.clear()
-    invalidate_caches()

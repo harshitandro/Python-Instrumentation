@@ -1,6 +1,8 @@
 import sys
 
 # The magic happens behind the curtain.
+from py._builtin import execfile
+
 from utils.custom_loader import enable_module_hook_on_load
 from utils.instrumentation import instrument_system_api
 
@@ -11,4 +13,4 @@ enable_module_hook_on_load()
 sys.argv = sys.argv[1:]
 
 # Transparently call the user code with all the given command line parameters.
-exec(open(sys.argv[0]).read())
+execfile(sys.argv[0])

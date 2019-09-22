@@ -23,7 +23,7 @@ class Test1:
         print("==========================================================")
         return x/y
 
-    def func_test_subprocess_init(self0):
+    def func_test_subprocess_init(self):
         print("==========================================================")
         print("Method : {}".format(inspect.currentframe().f_code.co_name))
         out = subprocess.Popen(['ls', '-la', '/'],
