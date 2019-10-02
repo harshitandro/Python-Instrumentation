@@ -26,7 +26,7 @@ class Test1:
     def func_test_subprocess_init(self):
         print("==========================================================")
         print("Method : {}".format(inspect.currentframe().f_code.co_name))
-        out = subprocess.Popen(['ls', '-la', '/'],
+        out = subprocess.Popen(['git', '--version'],
                                stdout=subprocess.PIPE,
                                stderr=subprocess.STDOUT)
         print(out.stdout.readlines())

@@ -6,6 +6,11 @@ Hence this framework uses dynamic instrumentation of python achieved by monkey p
 
 This framework runs as a wrapper for any python script/program.
 
+### Key Features: 
+- Support for both Python 2 & 3.
+- Hooking of methods/functions on module loading. This ensure there is no inconsistency between multiple references of same module anywhere in user code.
+- Each callback has complete info about the caller including the threadID.
+
 ### Run :
 ```bash
 $ python ${ABSOLUTE_PATH_FOR_FRAMEWORK}/driver.py YOUR_ACTUALL_SCRIPT.py CMD_ARGS_TO_YOUR_SCRIPT
@@ -25,7 +30,7 @@ The name of callbacks are self explanatory:
  - `error_callback` is called whenever a hooked method/function call has raised an error. 
 
 ### Current Support: 
-- Python 3.4 & above
+- Python 2.7 & above
 
 ### Test & Demo:
 ```bash
@@ -33,22 +38,18 @@ $ git clone https://github.com/harshitandro/Python-Instrumentator.git
 $ cd Python-Instrumentator
 $ python driver.py test_runner.py TestArg1 TestArg2
 ```
- This should output something like this:
+ This should output something like this for Python3 env:
 ```text
 Hooked method : __init__ of subprocess
 Hooked method : system of posix
 Hooked method : open of io
-StartCallback for io.open :: args : ('/mnt/Workspace/Pycharm-Workspace/Python-Instrumentator/test_runner.py', 'r') :: kwargs : {}
-EndCallback for io.open :: return val : (<_io.TextIOWrapper name='/mnt/Workspace/Pycharm-Workspace/Python-Instrumentator/test_runner.py' mode='r' encoding='UTF-8'>,)
-StartCallback for io.open :: args : ('/mnt/Workspace/Pycharm-Workspace/Python-Instrumentator/hooktest/test1.py',) :: kwargs : {}
-EndCallback for io.open :: return val : (<_io.TextIOWrapper name='/mnt/Workspace/Pycharm-Workspace/Python-Instrumentator/hooktest/test1.py' mode='r' encoding='UTF-8'>,)
-Hooked method : func_test_user_code of hooktest.test1
-Hooked method : func_test_user_code_non_class of hooktest.test1
-StartCallback for io.open :: args : ('/tmp/test.txt',) :: kwargs : {}
-EndCallback for io.open :: return val : (<_io.TextIOWrapper name='/tmp/test.txt' mode='r' encoding='UTF-8'>,)
+StartCallback for io.open :: threadID : 140176730859328 :: args : ('/mnt/Workspace/Pycharm-Workspace/Python-Instrumentator/test_runner.py', 'rb') :: kwargs : {}
+EndCallback for io.open :: return val : (<_io.BufferedReader name='/mnt/Workspace/Pycharm-Workspace/Python-Instrumentator/test_runner.py'>,) :: threadID : 140176730859328
+StartCallback for io.open :: threadID : 140176730859328 :: args : ('/tmp/test.txt',) :: kwargs : {}
+EndCallback for io.open :: return val : (<_io.TextIOWrapper name='/tmp/test.txt' mode='r' encoding='UTF-8'>,) :: threadID : 140176730859328
 
 Command args are : ['/mnt/Workspace/Pycharm-Workspace/Python-Instrumentator/test_runner.py', 'arg1', 'arg2']
-StartCallback for hooktest.test1.Test1.func_test_user_code :: args : (<hooktest.test1.Test1 object at 0x7f5a418d20f0>, 10, 2, 1, 1) :: kwargs : {'name': 'Tester Name'}
+Calling method Test1.func_test_user_code
 ==========================================================
 Method : func_test_user_code
 	x :  10
@@ -56,10 +57,10 @@ Method : func_test_user_code
 	argsv are :  (1, 1)
 	kwargs are :  {'name': 'Tester Name'}
 ==========================================================
-EndCallback for hooktest.test1.Test1.func_test_user_code :: return val : (5.0,)
 5.0
+Time Taken: 0.0000395774841309
 
-StartCallback for hooktest.test1.Test1.func_test_user_code :: args : (<hooktest.test1.Test1 object at 0x7f5a418d20f0>,) :: kwargs : {'x': 10, 'y': 0, 'name': 'Tester Name'}
+Calling method Test1.func_test_user_code
 ==========================================================
 Method : func_test_user_code
 	x :  10
@@ -67,43 +68,49 @@ Method : func_test_user_code
 	argsv are :  ()
 	kwargs are :  {'name': 'Tester Name'}
 ==========================================================
-ErrorCallback for hooktest.test1.Test1.func_test_user_code :: type : <class 'ZeroDivisionError'> :: value : division by zero :: traceback : <traceback object at 0x7f5a4190a888>
 Error caught
+Time Taken: 0.0000305175781250
 
-StartCallback for hooktest.test1.func_test_user_code_non_class :: args : ('Tester Name',) :: kwargs : {}
+Calling method func_test_user_code_non_class
 ==========================================================
 Inside User function non-class : Tester Name
 ==========================================================
-EndCallback for hooktest.test1.func_test_user_code_non_class :: return val : (None,)
 None
+Time Taken: 0.0000123977661133
 
+Calling method Test1.func_test_subprocess_init
 ==========================================================
 Method : func_test_subprocess_init
-StartCallback for subprocess.Popen.__init__ :: args : (<subprocess.Popen object at 0x7f5a419415c0>, ['ls', '-la', '/']) :: kwargs : {'stdout': -1, 'stderr': -2}
-EndCallback for subprocess.Popen.__init__ :: return val : (None,)
-[b'total 260\n', b'dr-xr-xr-x.  23 root root   4096 Jun 30 23:18 .\n', b'dr-xr-xr-x.  23 root root   4096 Jun 30 23:18 ..\n', b'-rw-r--r--    1 root root      0 Jul 30  2018 .autorelabel\n', b'lrwxrwxrwx    1 root root      7 Feb 11  2019 bin -> usr/bin\n', b'dr-xr-xr-x.   7 root root   4096 Sep 14 10:49 boot\n', b'drwxr-xr-x    2 root root   4096 Feb 10  2019 data\n', b'drwxr-xr-x   22 root root   4760 Sep 17 23:44 dev\n', b'drwxr-xr-x. 171 root root  12288 Sep 22 09:49 etc\n', b'drwxr-xr-x.   4 root root   4096 Feb 11  2019 home\n', b'lrwxrwxrwx    1 root root      7 Feb 11  2019 lib -> usr/lib\n', b'lrwxrwxrwx    1 root root      9 Feb 11  2019 lib64 -> usr/lib64\n', b'drwx------.   2 root root  16384 Apr 25  2018 lost+found\n', b'drwxr-xr-x.   2 root root   4096 Feb 11  2019 media\n', b'drwxr-xr-x    3 root root      0 Sep 17 22:42 misc\n', b'drwxr-xr-x.   7 root root   4096 Feb 11  2019 mnt\n', b'drwxr-xr-x    2 root root      0 Sep 17 22:42 net\n', b'drwxrwxrwx.  15 root root   4096 Jul 21 20:06 opt\n', b'dr-xr-xr-x  479 root root      0 Sep 18 04:12 proc\n', b'dr-xr-x---.  22 root root   4096 Sep 16 00:17 root\n', b'drwxr-xr-x.   2 root root   4096 May  3  2018 .root.only\n', b'drwxr-xr-x   50 root root   1500 Sep 22 09:49 run\n', b'lrwxrwxrwx    1 root root      8 Feb 11  2019 sbin -> usr/sbin\n', b'drwxr-xr-x.   2 root root   4096 Feb 11  2019 srv\n', b'dr-xr-xr-x   13 root root      0 Sep 18 04:12 sys\n', b'drwxrwxrwt. 125 root root 180224 Sep 22 10:05 tmp\n', b'drwxrwxrwt.   2 root root   4096 May  3  2018 tmp.new\n', b'drwxr-xr-x.  13 root root   4096 Jun 30 23:18 usr\n', b'drwxr-xr-x.  21 root root   4096 Jun 30 23:40 var\n']
+StartCallback for subprocess.Popen.__init__ :: threadID : 140176730859328 :: args : (<subprocess.Popen object at 0x7f7d62319ac8>, ['git', '--version']) :: kwargs : {'stdout': -1, 'stderr': -2}
+EndCallback for subprocess.Popen.__init__ :: return val : (None,) :: threadID : 140176730859328
+[b'git version 2.21.0\n']
 ==========================================================
-StartCallback for subprocess.Popen.__init__ :: args : (<subprocess.Popen object at 0x7f5a41a08978>, 'git --version') :: kwargs : {'shell': True}
-EndCallback for subprocess.Popen.__init__ :: return val : (None,)
+StartCallback for subprocess.Popen.__init__ :: threadID : 140176730859328 :: args : (<subprocess.Popen object at 0x7f7d62dd6710>, 'git --version') :: kwargs : {'shell': True}
+EndCallback for subprocess.Popen.__init__ :: return val : (None,) :: threadID : 140176730859328
 git version 2.21.0
 returned value: 0
 ==========================================================
+Time Taken: 0.0068063735961914
 
+Calling method Test1.func_test_os_system
 ==========================================================
 Method : func_test_os_system
-StartCallback for posix.system :: args : ('git --version',) :: kwargs : {}
+StartCallback for posix.system :: threadID : 140176730859328 :: args : ('git --version',) :: kwargs : {}
 git version 2.21.0
-EndCallback for posix.system :: return val : (0,)
+EndCallback for posix.system :: return val : (0,) :: threadID : 140176730859328
 returned value: 0
 ==========================================================
+Time Taken: 0.0034019947052002
 
+Calling method Test1.func_test_exec_os_system
 ==========================================================
 Method : func_test_exec_os_system
-StartCallback for posix.system :: args : ('git --version',) :: kwargs : {}
+StartCallback for posix.system :: threadID : 140176730859328 :: args : ('git --version',) :: kwargs : {}
 git version 2.21.0
-EndCallback for posix.system :: return val : (0,)
+EndCallback for posix.system :: return val : (0,) :: threadID : 140176730859328
 returned value: 0
 ==========================================================
+Time Taken: 0.0042455196380615
 
 ```
 
