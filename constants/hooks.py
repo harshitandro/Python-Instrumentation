@@ -11,10 +11,17 @@ BUILTIN_CALLABLES_TO_HOOK = {
         "system", # System Command hook
     ],
 
+    # For Python 3.x
     "builtins": [
         "open", # File Open hooks
+        #"exec", # Dynamic python code execution hooks
     ],
 
+    # For Python 2.x
+    "__builtin__": [
+        "open", # File Open hooks
+        #"exec", # Dynamic python code execution hooks
+    ],
 }
 
 USER_CALLABLES_TO_HOOK = {

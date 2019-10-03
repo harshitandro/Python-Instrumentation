@@ -29,3 +29,4 @@ if sys.argv[0].endswith(".py") :
     _execfile(sys.argv[0], globals(), locals())
 else:
     print("Unsupported file to execute.", file=sys.stderr)
+    print("Sys args are : {}".format(sys.argv), file=sys.stderr)
