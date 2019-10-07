@@ -13,13 +13,13 @@ BUILTIN_CALLABLES_TO_HOOK = {
 
     # For Python 3.x
     "builtins": [
-        "open", # File Open hooks
+        # "open", # File Open hooks
         #"exec", # Dynamic python code execution hooks
     ],
 
     # For Python 2.x
     "__builtin__": [
-        "open", # File Open hooks
+        # "open", # File Open hooks
         #"exec", # Dynamic python code execution hooks
     ],
 }
@@ -31,6 +31,7 @@ USER_CALLABLES_TO_HOOK = {
         "Test1.func_test_user_code", # User Method
         "func_test_user_code_non_class" # User Function
     ],
+
 }
 
 
