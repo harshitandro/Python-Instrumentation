@@ -4,7 +4,6 @@ from time import time
 from hooktest.test1 import Test1, func_test_user_code_non_class
 
 if __name__ == '__main__':
-    open("/tmp/test.txt")
     obj = Test1()
     print("\nCommand args are : {}".format(sys.argv))
 
