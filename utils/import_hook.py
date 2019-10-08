@@ -1,6 +1,7 @@
 from __future__ import print_function
 
 import sys
+import traceback
 
 from constants.hooks import USER_CALLABLES_TO_HOOK
 from utils.callbacks import start_callback, end_callback, error_callback
@@ -29,8 +30,14 @@ def custom_import(*args, **kwargs):
                 cls = None
                 func_str = func_string
                 if func_str.find(".") != -1:
-                    class_str, func_str = func_str.split(".")
-                    cls = getattr(module, class_str)
+                    func_str_parts = func_str.split(".")
+                    for part_i in range(len(func_str_parts)-1):
+                        class_str = func_str_parts[part_i]
+                        func_str = func_str_parts[part_i+1]
+                        if cls is None:
+                            cls = getattr(module, class_str)
+                        else:
+                            cls = getattr(cls, class_str)
                 if cls is not None:
                     func = getattr(cls, func_str)
                     setattr(cls, func_str,
@@ -40,7 +47,8 @@ def custom_import(*args, **kwargs):
                     setattr(module, func_str,
                             instrument(func, start_callback, end_callback, error_callback))
     except:
-        print("Error caught : {}".format(sys.exc_info()))
+        print("Error caught in import hook : {}".format(sys.exc_info()))
+        traceback.print_exc()
     return module
 
 

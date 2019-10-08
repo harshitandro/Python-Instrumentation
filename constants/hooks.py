@@ -29,7 +29,9 @@ USER_CALLABLES_TO_HOOK = {
     # Test User Module
     "hooktest.test1": [
         "Test1.func_test_user_code", # User Method
-        "func_test_user_code_non_class" # User Function
+        "func_test_user_code_non_class", # User Function
+        "Test1.Test2.func_test_user_code", # User Method - Nested Class
+        "Test3.func_test_user_code", # User Method - Multiple class in single module
     ],
 
 }

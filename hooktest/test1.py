@@ -56,3 +56,32 @@ class Test1:
 
         exec(cmd)  # returns the exit code in unix
         print("==========================================================")
+
+
+    class Test2:
+        def __init__(self):
+            pass
+
+        def func_test_user_code(self, x, y, *argv, **kwargs):
+            print("==========================================================")
+            print("Method : {}".format(inspect.currentframe().f_code.co_name))
+            print("\tx : ", x)
+            print("\ty : ", y)
+            print("\targsv are : ", argv)
+            print("\tkwargs are : ", kwargs)
+            print("==========================================================")
+            return x / y
+
+class Test3:
+    def __init__(self):
+        pass
+
+    def func_test_user_code(self, x, y, *argv, **kwargs):
+        print("==========================================================")
+        print("Method : {}".format(inspect.currentframe().f_code.co_name))
+        print("\tx : ", x)
+        print("\ty : ", y)
+        print("\targsv are : ", argv)
+        print("\tkwargs are : ", kwargs)
+        print("==========================================================")
+        return x / y

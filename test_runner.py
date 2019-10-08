@@ -1,10 +1,12 @@
 import sys
 from time import time
 
-from hooktest.test1 import Test1, func_test_user_code_non_class
+from hooktest.test1 import Test1, func_test_user_code_non_class, Test3
 
 if __name__ == '__main__':
     obj = Test1()
+    obj2 = Test1.Test2()
+    obj3 = Test3()
     print("\nCommand args are : {}".format(sys.argv))
 
     print("Calling method Test1.func_test_user_code")
@@ -38,6 +40,16 @@ if __name__ == '__main__':
     print("Calling method Test1.func_test_exec_os_system")
     start_time = time()
     obj.func_test_exec_os_system()
+    print("Time Taken: {0:.16f}".format(time() - start_time))
+    print()
+    print("Calling method Test1.Test2.func_test_user_code")
+    start_time = time()
+    print(obj2.func_test_user_code(10, 2, 1, 1, name="Tester Name"))
+    print("Time Taken: {0:.16f}".format(time() - start_time))
+    print()
+    print("Calling method Test3.func_test_user_code")
+    start_time = time()
+    print(obj3.func_test_user_code(10, 2, 1, 1, name="Tester Name"))
     print("Time Taken: {0:.16f}".format(time() - start_time))
 
 
