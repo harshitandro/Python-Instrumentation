@@ -1,13 +1,11 @@
 import sys
-import traceback
 from importlib import import_module
-from inspect import ismethod
 
 from constants.hooks import BUILTIN_CALLABLES_TO_HOOK, USER_CALLABLES_TO_HOOK
 from utils.callbacks import start_callback, end_callback, error_callback
 
 
-def instrument(func, source_string, startCallback, endCallback, errorCallback, isMethod=False):
+def instrument(func, source_string, startCallback, endCallback, errorCallback):
     """This function is used to instrument the given method/function 'func'."""
     old_func = func
 
@@ -57,8 +55,8 @@ def apply_hooks(module, is_system_hook=False):
 
                 func = getattr(mod, func_str)
 
-                setattr(mod, func_str, instrument(func, source_string, start_callback, end_callback, error_callback, isMethod= ismethod(func)))
+                setattr(mod, func_str, instrument(func, source_string, start_callback, end_callback, error_callback))
     except:
         print("Error caught in hooking : {}".format(sys.exc_info()))
-        traceback.print_exc()
+        # traceback.print_exc()
     return module
