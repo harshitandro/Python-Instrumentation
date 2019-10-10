@@ -1,6 +1,7 @@
 import sys
 import traceback
 from importlib import import_module
+from inspect import ismethod
 
 from constants.hooks import BUILTIN_CALLABLES_TO_HOOK, USER_CALLABLES_TO_HOOK
 from utils.callbacks import start_callback, end_callback, error_callback
@@ -43,33 +44,20 @@ def apply_hooks(module, is_system_hook=False):
         HOOK_MAP = BUILTIN_CALLABLES_TO_HOOK
     else:
         HOOK_MAP = USER_CALLABLES_TO_HOOK
-
-    # Invoking hooking logic at time of module loading
     try:
         if module.__name__ in list(HOOK_MAP.keys()):
-            for func_string in HOOK_MAP[module.__name__]:
-                source_string = module.__name__ + "." + func_string
-                cls = None
-                func_str = func_string
-                if func_str.find(".") != -1:
-                    func_str_parts = func_str.split(".")
-                    for part_i in range(len(func_str_parts) - 1):
-                        class_str = func_str_parts[part_i]
-                        func_str = func_str_parts[part_i + 1]
-                        if cls is None:
-                            cls = getattr(module, class_str)
-                        else:
-                            cls = getattr(cls, class_str)
-                if cls is not None:
-                    func = getattr(cls, func_str)
-                    setattr(cls, func_str,
-                            instrument(func, source_string, start_callback, end_callback,
-                                       error_callback, isMethod=True))
-                else:
-                    func = getattr(module, func_str)
-                    setattr(module, func_str,
-                            instrument(func, source_string, start_callback, end_callback,
-                                       error_callback))
+            for callable_str in HOOK_MAP[module.__name__]:
+                source_string = module.__name__ + "." + callable_str
+                callable_str_parts = callable_str.split(".")
+                func_str = callable_str_parts[-1]
+                mod = module
+
+                for part in callable_str_parts[:-1]:
+                    mod = getattr(mod, part)
+
+                func = getattr(mod, func_str)
+
+                setattr(mod, func_str, instrument(func, source_string, start_callback, end_callback, error_callback, isMethod= ismethod(func)))
     except:
         print("Error caught in hooking : {}".format(sys.exc_info()))
         traceback.print_exc()
