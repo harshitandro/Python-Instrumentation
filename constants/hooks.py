@@ -1,5 +1,5 @@
 '''This contains maps of callable to hook. Key is the name of module & value is the list of
-    functions or Class.method to be hooked.
+    submodule.functions or submodule.Class.method to be hooked.
 '''
 
 BUILTIN_CALLABLES_TO_HOOK = {
@@ -27,12 +27,16 @@ BUILTIN_CALLABLES_TO_HOOK = {
 USER_CALLABLES_TO_HOOK = {
 
     # Test User Module
-    "hooktest.test1": [
-        "Test1.func_test_user_code", # User Method
-        "func_test_user_code_non_class", # User Function
-        "Test1.Test2.func_test_user_code", # User Method - Nested Class
-        "Test3.func_test_user_code", # User Method - Multiple class in single module
+    "hooktest": [
+        "user_code_builtin_test.Test1.func_test_user_code", # User Method
+        "user_code_builtin_test.func_test_user_code_non_class", # User Function
+        "user_code_builtin_test.Test1.Test2.func_test_user_code", # User Method - Nested Class
+        "user_code_builtin_test.Test3.func_test_user_code", # User Method - Multiple class in single module
     ],
+
+    # "sqlite3" : [
+    #   "connect", "Cursor.execute"
+    # ],
 
 }
 
