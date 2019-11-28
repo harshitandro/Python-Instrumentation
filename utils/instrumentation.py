@@ -1,7 +1,7 @@
 import sys
 from importlib import import_module
 
-from constants.hooks import BUILTIN_CALLABLES_TO_HOOK, USER_CALLABLES_TO_HOOK
+from constants.hooks import BUILTIN_CALLABLES_TO_HOOK, USER_CALLABLES_TO_HOOK, INSTRUMENTATION_DRIVER_PATH
 from utils.callbacks import start_callback, end_callback, error_callback
 
 
@@ -9,16 +9,34 @@ def instrument(func, source_string, startCallback, endCallback, errorCallback):
     """This function is used to instrument the given method/function 'func'."""
     old_func = func
 
-    def new_func(*args, **kwargs):
-        startCallback(source_string, *args, **kwargs)
-        try:
-            ret = old_func(*args, **kwargs)
-        except:
-            errorCallback(source_string, *sys.exc_info())
-            # raise so that the user code can handle the thrown error
-            raise
-        endCallback(source_string, ret)
-        return ret
+    if source_string == "subprocess.Popen.__init__":
+        def new_func(*args, **kwargs):
+            if "python" in args[1][0]:
+                new_args = list(args[1])
+                new_args.insert(1, INSTRUMENTATION_DRIVER_PATH)
+                args = list(args)
+                args[1] = tuple(new_args)
+                args = list(args)
+            startCallback(source_string, *args, **kwargs)
+            try:
+                ret = old_func(*args, **kwargs)
+            except:
+                errorCallback(source_string, *sys.exc_info())
+                # raise so that the user code can handle the thrown error
+                raise
+            endCallback(source_string, ret)
+            return ret
+    else:
+        def new_func(*args, **kwargs):
+            startCallback(source_string, *args, **kwargs)
+            try:
+                ret = old_func(*args, **kwargs)
+            except:
+                errorCallback(source_string, *sys.exc_info())
+                # raise so that the user code can handle the thrown error
+                raise
+            endCallback(source_string, ret)
+            return ret
 
     print("Hooked API : {}".format(source_string))
     return new_func

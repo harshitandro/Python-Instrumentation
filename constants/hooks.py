@@ -1,6 +1,8 @@
 '''This contains maps of callable to hook. Key is the name of module & value is the list of
     submodule.functions or submodule.Class.method to be hooked.
 '''
+# Place holder to be set by driver
+INSTRUMENTATION_DRIVER_PATH = ""
 
 BUILTIN_CALLABLES_TO_HOOK = {
 
@@ -38,6 +40,14 @@ USER_CALLABLES_TO_HOOK = {
     #   "connect", "Cursor.execute"
     # ],
 
+    # Django Request Hooks
+    "django.core.handlers": [
+        "base.BaseHandler.get_response"
+    ],
+
+    "django.contrib.staticfiles.handlers": [
+        "StaticFilesHandler.get_response"
+    ]
 }
 
 
