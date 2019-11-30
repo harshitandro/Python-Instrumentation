@@ -8,6 +8,7 @@ def start_callback(source, handler_callback, *args, **kwargs):
     if handler_callback is not None:
         handler_callback(source, threadID, *args, **kwargs)
     else:
+        # TODO: Remove this to make the hook look effectively absent when handler set to None
         print(
             "StartCallback for {} :: threadID : {} :: args : {} :: kwargs : {} :: handler : {}".format(source, threadID,
                                                                                                        args, kwargs,
@@ -20,6 +21,7 @@ def end_callback(source, handler_callback, *ret_val):
     if handler_callback is not None:
         handler_callback(source, threadID, *ret_val)
     else:
+        # TODO: Remove this to make the hook look effectively absent when handler set to None
         print("EndCallback for {} :: return val : {} :: threadID : {} :: handler : {}".format(source, ret_val, threadID,
                                                                                               handler_callback))
 
@@ -32,6 +34,7 @@ def error_callback(source, handler_callback, type, value, traceback):
     if handler_callback is not None:
         handler_callback(source, threadID, type, value, traceback)
     else:
+        # TODO: Remove this to make the hook look effectively absent when handler set to None
         print(
             "ErrorCallback for {} :: threadID : {} :: type : {} :: value : {} :: traceback : {} :: handler : {}".format(
                 source, threadID, type, value, traceback, handler_callback))

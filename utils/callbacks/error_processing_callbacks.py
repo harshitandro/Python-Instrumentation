@@ -12,3 +12,6 @@ def django_static_err_processing_callback(source, threadID, type, value, traceba
 def flask_err_processing_callback(source, threadID, type, value, traceback):
     pass
 
+def empty_err_processing_callback(source, threadID, type, value, traceback):
+    pass
+

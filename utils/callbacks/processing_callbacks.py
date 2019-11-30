@@ -1,6 +1,6 @@
 from models.http_request import HttpRequest
 from utils.callbacks.callback_utils import extract_headers_from_environ, extract_client_ip_from_environ, \
-    print_http_intercept
+    print_http_intercept, print_db_call_intercept
 
 
 def django_processing_callback(source, threadID, *args, **kwargs):
@@ -48,3 +48,17 @@ def flask_processing_callback(source, threadID, *args, **kwargs):
     request = HttpRequest(method, api, content_type, body, client_ip, headers, query_param)
 
     print_http_intercept("Flask", threadID, request)
+
+
+def mysql_processing_callback(source, threadID, *args, **kwargs):
+    self = args[0]
+    query = args[1]
+    if len(args) >= 3:
+        params = args[2]
+        print_db_call_intercept("MySQL", threadID, query, params)
+    else:
+        print_db_call_intercept("MySQL", threadID, query, None)
+
+
+def empty_processing_callback(source, threadID, *args, **kwargs):
+    pass

@@ -1,10 +1,11 @@
 import sys
 from importlib import import_module
 
-from constants.hooks import BUILTIN_CALLABLES_TO_HOOK, USER_CALLABLES_TO_HOOK, INSTRUMENTATION_DRIVER_PATH
+from constants.hooks import BUILTIN_CALLABLES_TO_HOOK, USER_CALLABLES_TO_HOOK, INSTRUMENTATION_DRIVER_PATH, \
+    APPLIED_HOOK_SOURCE_STRING_LIST
 from utils.callbacks.base_callbacks import start_callback, end_callback, error_callback
 
-
+hooked_callables_list= []
 
 def instrument(func, source_string, startCallback, endCallback, errorCallback,
                processing_callback=None, ret_processing_callback=None, err_processing_callback=None):
@@ -55,10 +56,9 @@ def apply_hooks(module, is_system_hook=False):
         HOOK_LIST = BUILTIN_CALLABLES_TO_HOOK
     else:
         HOOK_LIST = USER_CALLABLES_TO_HOOK
-    try:
-        for hook_element in HOOK_LIST:
-            if module.__name__ == hook_element['module']:
-                print(hook_element)
+    for hook_element in HOOK_LIST:
+        try:
+            if module.__name__ == hook_element['module'] and hook_element not in APPLIED_HOOK_SOURCE_STRING_LIST:
                 processing_callback = hook_element['callback_handler']
                 err_processing_callback = hook_element['callback_err_handler']
                 ret_processing_callback = hook_element['callback_ret_handler']
@@ -72,12 +72,14 @@ def apply_hooks(module, is_system_hook=False):
                     mod = getattr(mod, part)
 
                 func = getattr(mod, func_str)
-
                 setattr(mod, func_str, instrument(func, source_string, start_callback, end_callback, error_callback,
                                                   processing_callback=processing_callback,
                                                   ret_processing_callback=ret_processing_callback,
                                                   err_processing_callback=err_processing_callback))
-    except:
-        print("Error caught in hooking : {}".format(sys.exc_info()))
-        # traceback.print_exc()
+                APPLIED_HOOK_SOURCE_STRING_LIST.append(hook_element)
+            # else:
+            #     print("Callable already hooked : {}".format(hook_element))
+        except:
+            print("Error caught while hooking : {}".format(sys.exc_info()))
+            # traceback.print_exc()
     return module
