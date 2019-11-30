@@ -1,0 +1,28 @@
+
+def extract_headers_from_environ(environ) -> dict :
+    headers = {}
+    for header_entry in environ.items():
+        if header_entry[0].startswith("HTTP_"):
+            key = header_entry[0].partition("_")[2]
+            val = header_entry[1]
+            if key != "":
+                headers[key] = val
+    return headers
+
+
+def extract_client_ip_from_environ(environ) -> dict :
+    return environ["REMOTE_ADDR"]
+
+
+def print_http_intercept(server_name, threadID, request):
+
+    data = '''
+    --------------------------------------------------------------------------------------------------------------------
+    Intercepted {} HTTP request on thread {}
+    --------------------------------------------------------------------
+    {}
+    --------------------------------------------------------------------------------------------------------------------
+    '''
+
+    print(data.format(server_name, threadID, request))
+

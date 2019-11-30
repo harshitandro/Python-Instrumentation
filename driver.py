@@ -20,6 +20,19 @@ print("Python Instrumentor calling actual application")
 # Transparently call the user code with all the given command line parameters.
 if sys.argv[0].endswith(".py") :
     _execfile(sys.argv[0], globals(), locals())
+elif sys.argv[0] == "-m" :
+    # Run with the -m switch
+    import runpy
+    mod_name = sys.argv[1]
+    sys.argv = sys.argv[1:]
+    if hasattr(runpy, '_run_module_as_main'):
+        # Newer versions of Python actually use this when the -m switch is used.
+        if sys.version_info[:2] <= (2, 6):
+            runpy._run_module_as_main(mod_name, set_argv0=False)
+        else:
+            runpy._run_module_as_main(mod_name, alter_argv=False)
+    else:
+        runpy.run_module(sys.argv[1])
 else:
     print("Unsupported file to execute.", file=sys.stderr)
     print("Sys args are : {}".format(sys.argv), file=sys.stderr)
