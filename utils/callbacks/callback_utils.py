@@ -27,6 +27,19 @@ def print_http_intercept(server_name, threadID, request):
     print(data.format(server_name, threadID, request))
 
 
+def print_http_response_intercept(server_name, threadID, response):
+
+    data = '''
+        --------------------------------------------------------------------------------------------------------------------
+        Intercepted {} HTTP response on thread {}
+        --------------------------------------------------------------------
+        {}
+        --------------------------------------------------------------------------------------------------------------------
+    '''
+
+    print(data.format(server_name, threadID, response))
+
+
 def print_db_call_intercept(db_server_name, threadID, query, parameters):
     data = '''
         --------------------------------------------------------------------------------------------------------------------

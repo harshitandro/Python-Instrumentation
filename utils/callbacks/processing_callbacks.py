@@ -1,9 +1,9 @@
 from models.http_request import HttpRequest
 from utils.callbacks.callback_utils import extract_headers_from_environ, extract_client_ip_from_environ, \
-    print_http_intercept, print_db_call_intercept, print_generic_intercept
+    print_http_intercept, print_db_call_intercept
 
 
-def django_processing_callback(source, threadID, *args, **kwargs):
+def django_request_processing_callback(source, threadID, *args, **kwargs):
 
     method = args[1].method
     api = args[1].path
@@ -17,7 +17,8 @@ def django_processing_callback(source, threadID, *args, **kwargs):
 
     print_http_intercept("Django", threadID, request)
 
-def django_static_processing_callback(source, threadID, *args, **kwargs):
+
+def django_request_static_processing_callback(source, threadID, *args, **kwargs):
     method = args[1].method
     api = args[1].path
     content_type = args[1].content_type
@@ -30,7 +31,7 @@ def django_static_processing_callback(source, threadID, *args, **kwargs):
     print_http_intercept("Django Static", threadID, request)
 
 
-def flask_processing_callback(source, threadID, *args, **kwargs):
+def flask_request_processing_callback(source, threadID, *args, **kwargs):
     self = args[0]
 
     # Extract base environ
@@ -61,5 +62,5 @@ def mysql_processing_callback(source, threadID, *args, **kwargs):
 
 
 def empty_processing_callback(source, threadID, *args, **kwargs):
-    print_generic_intercept(source, threadID, args, kwargs)
+    # print_generic_intercept(source, threadID, args, kwargs)
     pass

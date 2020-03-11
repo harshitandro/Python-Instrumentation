@@ -14,7 +14,7 @@ def instrument(func, source_string, startCallback, endCallback, errorCallback,
 
     def new_func(*args, **kwargs):
         if source_string == "flask.app.Flask.dispatch_request":
-            pass
+            return func
             # import inspect
             # print(getattr(inspect.currentframe().f_globals, "_request_ctx_stack".top.request)
         if source_string == "subprocess.Popen.__init__" and "python" in args[1][0]:

@@ -1,7 +1,9 @@
 from __future__ import print_function
+
 import os
 
 from constants import hooks
+
 setattr(hooks, "INSTRUMENTATION_DRIVER_PATH", os.path.abspath(__file__))
 print("Python Instrumentor located at : {}".format(hooks.INSTRUMENTATION_DRIVER_PATH))
 
@@ -19,7 +21,19 @@ sys.argv = sys.argv[1:]
 print("Python Instrumentor calling actual application")
 # Transparently call the user code with all the given command line parameters.
 if sys.argv[0].endswith(".py") :
-    _execfile(sys.argv[0], globals(), locals())
+    app_dir = sys.argv[0].rpartition("/")[0]
+    if app_dir == '':
+        app_dir = os.getcwd()
+
+    sys.path.insert(0, app_dir)
+
+    app_globals = globals()
+    app_globals["__file__"] = sys.argv[0]
+    app_locals = locals()
+    app_locals["__file__"] = sys.argv[0]
+
+    _execfile(sys.argv[0], app_globals, app_locals)
+
 elif sys.argv[0] == "-m" :
     # Run with the -m switch
     import runpy

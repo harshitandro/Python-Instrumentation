@@ -82,14 +82,14 @@ USER_CALLABLES_TO_HOOK = [
     {
         "module": "django.core.handlers",
         "callable": "base.BaseHandler.get_response",
-        "callback_handler": processing_callbacks.django_processing_callback,
+        "callback_handler": processing_callbacks.django_request_processing_callback,
         "callback_ret_handler": return_processing_callbacks.django_ret_processing_callback,
         "callback_err_handler": error_processing_callbacks.django_err_processing_callback,
     },
     {
         "module": "django.contrib.staticfiles.handlers",
         "callable": "StaticFilesHandler.get_response",
-        "callback_handler": processing_callbacks.django_static_processing_callback,
+        "callback_handler": processing_callbacks.django_request_static_processing_callback,
         "callback_ret_handler": return_processing_callbacks.django_static_ret_processing_callback,
         "callback_err_handler": error_processing_callbacks.django_static_err_processing_callback,
     },
@@ -98,10 +98,17 @@ USER_CALLABLES_TO_HOOK = [
     {
         "module": "flask",
         "callable": "app.Flask.wsgi_app",
-        "callback_handler": processing_callbacks.flask_processing_callback,
-        "callback_ret_handler": return_processing_callbacks.flask_ret_processing_callback,
-        "callback_err_handler": error_processing_callbacks.flask_err_processing_callback,
+        "callback_handler": processing_callbacks.flask_request_processing_callback,
+        "callback_ret_handler": None,
+        "callback_err_handler": None,
     },
+    # {
+    #     "module": "flask",
+    #     "callable": "app.Flask.process_response",
+    #     "callback_handler": processing_callbacks.empty_processing_callback,
+    #     "callback_ret_handler": return_processing_callbacks.flask_ret_processing_callback,
+    #     "callback_err_handler": error_processing_callbacks.flask_err_processing_callback,
+    # },
 
     # MySQL DB Hooks
     {
